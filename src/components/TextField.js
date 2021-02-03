@@ -14,13 +14,21 @@ const TextField = ({
       style={{
         height: 50,
         marginVertical: 10,
-        paddingLeft: 10,
+        paddingLeft: 15,
         fontSize: 15,
         alignSelf: 'center',
         width: '80%',
-        borderRadius: 15,
+        borderRadius: 25,
         borderColor: 'gray',
         backgroundColor: 'white',
+        shadowColor: 'black',
+        shadowOffset: {
+          width: 5,
+          height: 5,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 10,
       }}
       placeholder={placeholder}
       placeholderTextColor={'grey'}

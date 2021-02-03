@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {registerUser, updateCurrentUser} from '../redux/user/userActions';
+import React, {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {updateCurrentUser} from '../redux/user/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
@@ -36,12 +36,7 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: 'black',
-      }}>
+    <View style={styles.container}>
       <Title name={'LOGIN'} />
       <TextField
         placeholder={'Email'}
@@ -59,23 +54,30 @@ const LoginScreen = ({navigation}) => {
       />
       <Button onPress={login} title={'Login'} />
       <TouchableOpacity
-        style={{
-          marginVertical: 20,
-          alignSelf: 'center',
-        }}
+        style={styles.pressableTextView}
         onPress={() => {
           navigation.navigate('Register');
         }}>
-        <Text
-          style={{
-            color: 'green',
-            fontSize: 15,
-          }}>
-          Dont have an account?
-        </Text>
+        <Text style={styles.pressableText}>Dont have an account?</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#16191A',
+  },
+  pressableTextView: {
+    marginVertical: 20,
+    alignSelf: 'center',
+  },
+  pressableText: {
+    color: 'green',
+    fontSize: 15,
+  },
+});
 
 export default LoginScreen;

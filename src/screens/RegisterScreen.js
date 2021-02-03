@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {registerUser} from '../redux/user/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import TextField from '../components/TextField';
@@ -21,9 +21,6 @@ const RegisterScreen = ({navigation}) => {
   const [confirmPassword, onChangeConfirmPassword] = useState('');
   const [photo, setPhoto] = useState('');
   const [dob, onChangedob] = useState('');
-
-  const [user, setUser] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const onRegister = async () => {
     const payload = [
@@ -47,19 +44,8 @@ const RegisterScreen = ({navigation}) => {
     }
   };
 
-  const readItem = () => {
-    AsyncStorage.getItem('LOCAL_USERS').then((itemValue) => {
-      console.log('LOCAL_USERS : ', JSON.parse(itemValue));
-    });
-  };
-
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: 'black',
-      }}>
+    <View style={styles.container}>
       <Title name={'REGISTER'} />
       <TextField
         placeholder={'First Name'}
@@ -106,23 +92,30 @@ const RegisterScreen = ({navigation}) => {
       />
       <Button onPress={onRegister} title={'Register'} />
       <TouchableOpacity
-        style={{
-          marginVertical: 20,
-          alignSelf: 'center',
-        }}
+        style={styles.pressableTextView}
         onPress={() => {
           navigation.navigate('Login');
         }}>
-        <Text
-          style={{
-            color: 'green',
-            fontSize: 15,
-          }}>
-          Already have an account
-        </Text>
+        <Text style={styles.pressableText}>Already have an account</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#16191A',
+  },
+  pressableTextView: {
+    marginVertical: 20,
+    alignSelf: 'center',
+  },
+  pressableText: {
+    color: 'green',
+    fontSize: 15,
+  },
+});
 
 export default RegisterScreen;

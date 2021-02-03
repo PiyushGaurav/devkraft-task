@@ -9,11 +9,19 @@ const TextField = ({title, onPress}) => {
         width: '80%',
         height: 50,
         margin: 10,
-        borderRadius: 20,
+        borderRadius: 25,
         alignSelf: 'center',
         backgroundColor: 'green',
         alignItems: 'center',
         justifyContent: 'center',
+        shadowColor: 'black',
+        shadowOffset: {
+          width: 5,
+          height: 5,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 10,
       }}
       onPress={onPress}>
       <Text
