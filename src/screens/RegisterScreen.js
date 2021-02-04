@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {registerUser} from '../redux/user/userActions';
+import {registerUser, updateCurrentUser} from '../redux/user/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
@@ -20,6 +20,7 @@ import genericShadow from '../utils/genericShadow';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import DialogView from '../components/DialogView';
+import {validate} from '../utils/validation';
 
 const RegisterScreen = ({navigation}) => {
   const userData = useSelector((state) => state.user.users);
@@ -70,21 +71,23 @@ const RegisterScreen = ({navigation}) => {
       return;
     }
 
-    const payload = [
-      {
-        name,
-        email,
-        phoneNumber,
-        password,
-        gender,
-        address,
-        photo,
-        dob,
-      },
-    ];
-    dispatch(registerUser(payload));
-    setErrorText('Registration successfull');
-    setPopup(true);
+    const payload = {
+      name,
+      email,
+      phoneNumber,
+      password,
+      gender,
+      address,
+      photo,
+      dob,
+    };
+    dispatch(registerUser([payload]));
+    dispatch(updateCurrentUser(payload));
+    try {
+      await AsyncStorage.setItem('LOCAL_CURRENT_USER', JSON.stringify(payload));
+    } catch (e) {
+      console.log(e);
+    }
     try {
       await AsyncStorage.setItem(
         'LOCAL_USERS',
@@ -129,45 +132,6 @@ const RegisterScreen = ({navigation}) => {
     const currentDate = selectedDate || dob;
     setShow(false);
     onChangedob(currentDate);
-  };
-
-  const validate = (fieldName, text) => {
-    const isNameEngValidated = (name) => {
-      const nameRejexEng = new RegExp('^[A-z ]+$');
-      return nameRejexEng.test(name);
-    };
-    const validateOnlyNumber = (n) => {
-      var numRegex = new RegExp('^[0-9]+$');
-      return numRegex.test(n);
-    };
-    const isPasswordValidated = (pass) => {
-      var emailRegex = new RegExp(
-        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
-      );
-      return emailRegex.test(pass);
-    };
-    const validateEmail = (email) => {
-      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(String(email).toLowerCase());
-    };
-
-    switch (fieldName) {
-      case 'name':
-        return isNameEngValidated(text);
-      case 'email':
-        return validateEmail(text);
-      case 'phoneNumber':
-        return validateOnlyNumber(text);
-      case 'password':
-      case 'confirmPassword':
-        return isPasswordValidated(text);
-      case 'address':
-      case 'dob':
-      case 'photo':
-        return true;
-      default:
-        return true;
-    }
   };
 
   const errorModal = () => {
@@ -256,34 +220,9 @@ const RegisterScreen = ({navigation}) => {
         onPress={() => {
           setShow(true);
         }}
-        style={{
-          paddingVertical: 10,
-          marginHorizontal: '10%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: 'white',
-          borderRadius: 25,
-          width: '80%',
-          height: 50,
-          margin: 10,
-          alignSelf: 'center',
-          ...genericShadow,
-        }}>
-        <Text
-          style={{
-            fontSize: 20,
-            paddingHorizontal: 20,
-          }}>
-          Date of birth
-        </Text>
-        <Text
-          style={{
-            fontSize: 20,
-            paddingHorizontal: 20,
-          }}>
-          {moment(dob).format('DD/MM/YYYY')}
-        </Text>
+        style={styles.dobView}>
+        <Text style={styles.dobText}>Date of birth</Text>
+        <Text style={styles.dob}>{moment(dob).format('DD/MM/YYYY')}</Text>
       </TouchableOpacity>
       {show && (
         <DateTimePicker
@@ -353,6 +292,28 @@ const styles = StyleSheet.create({
   imageLibrary: {
     width: 35,
     height: 35,
+  },
+  dobView: {
+    paddingVertical: 10,
+    marginHorizontal: '10%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 25,
+    width: '80%',
+    height: 50,
+    margin: 10,
+    alignSelf: 'center',
+    ...genericShadow,
+  },
+  dobText: {
+    fontSize: 20,
+    paddingHorizontal: 20,
+  },
+  dob: {
+    fontSize: 20,
+    paddingHorizontal: 20,
   },
 });
 
