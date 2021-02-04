@@ -6,6 +6,7 @@ const Title = ({name}) => {
     <Text
       style={{
         fontSize: 40,
+        paddingTop: 30,
         paddingBottom: 10,
         fontWeight: '800',
         alignSelf: 'center',

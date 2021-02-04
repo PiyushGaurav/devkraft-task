@@ -19,6 +19,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import genericShadow from '../utils/genericShadow';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import DialogView from '../components/DialogView';
 
 const RegisterScreen = ({navigation}) => {
   const userData = useSelector((state) => state.user.users);
@@ -33,8 +34,42 @@ const RegisterScreen = ({navigation}) => {
   const [photo, setPhoto] = useState('');
   const [show, setShow] = useState(false);
   const [dob, onChangedob] = useState(new Date(1598051730000));
+  const [showPopup, setPopup] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
   const onRegister = async () => {
+    if (!validate('name', name)) {
+      setErrorText('Invalid name');
+      setPopup(true);
+      return;
+    } else if (!validate('email', email)) {
+      setErrorText('Invalid email');
+      setPopup(true);
+      return;
+    } else if (!validate('phoneNumber', phoneNumber)) {
+      setErrorText('Invalid phone number');
+      setPopup(true);
+      return;
+    } else if (!validate('password', password)) {
+      setErrorText('Invalid pass');
+      setPopup(true);
+      return;
+    } else if (!validate('confirmPassword', confirmPassword)) {
+      setErrorText('Invalid confirm pass');
+      setPopup(true);
+      return;
+    } else if (address === '') {
+      setErrorText('Address field is empty');
+      setPopup(true);
+      return;
+    }
+    const dataAlreadyFound = userData.find((data) => data.email === email);
+    if (dataAlreadyFound) {
+      setErrorText('An account with this email already exist');
+      setPopup(true);
+      return;
+    }
+
     const payload = [
       {
         name,
@@ -48,6 +83,8 @@ const RegisterScreen = ({navigation}) => {
       },
     ];
     dispatch(registerUser(payload));
+    setErrorText('Registration successfull');
+    setPopup(true);
     try {
       await AsyncStorage.setItem(
         'LOCAL_USERS',
@@ -94,14 +131,64 @@ const RegisterScreen = ({navigation}) => {
     onChangedob(currentDate);
   };
 
+  const validate = (fieldName, text) => {
+    const isNameEngValidated = (name) => {
+      const nameRejexEng = new RegExp('^[A-z ]+$');
+      return nameRejexEng.test(name);
+    };
+    const validateOnlyNumber = (n) => {
+      var numRegex = new RegExp('^[0-9]+$');
+      return numRegex.test(n);
+    };
+    const isPasswordValidated = (pass) => {
+      var emailRegex = new RegExp(
+        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
+      );
+      return emailRegex.test(pass);
+    };
+    const validateEmail = (email) => {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+    };
+
+    switch (fieldName) {
+      case 'name':
+        return isNameEngValidated(text);
+      case 'email':
+        return validateEmail(text);
+      case 'phoneNumber':
+        return validateOnlyNumber(text);
+      case 'password':
+      case 'confirmPassword':
+        return isPasswordValidated(text);
+      case 'address':
+      case 'dob':
+      case 'photo':
+        return true;
+      default:
+        return true;
+    }
+  };
+
+  const errorModal = () => {
+    return (
+      <DialogView
+        show={showPopup}
+        errorText={errorText}
+        onDismiss={() => setPopup(false)}
+      />
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Title name={'REGISTER'} />
       <TextField
-        placeholder={'First Name'}
+        placeholder={'Full Name'}
         onChangeText={(text) => {
           onChangeName(text);
         }}
+        error={name && !validate('name', name)}
         value={name}
       />
       <TextField
@@ -109,6 +196,7 @@ const RegisterScreen = ({navigation}) => {
         onChangeText={(text) => {
           onChangeEmail(text);
         }}
+        error={email && !validate('email', email)}
         value={email}
       />
       <TextField
@@ -116,6 +204,7 @@ const RegisterScreen = ({navigation}) => {
         onChangeText={(text) => {
           onChangePhoneNumber(text);
         }}
+        error={phoneNumber && !validate('phoneNumber', phoneNumber)}
         value={phoneNumber}
       />
       <Genders gender={gender} onChangeGender={(g) => setGender(g)} />
@@ -124,6 +213,7 @@ const RegisterScreen = ({navigation}) => {
         onChangeText={(text) => {
           onChangePassword(text);
         }}
+        error={password && !validate('password', password)}
         value={password}
       />
       <TextField
@@ -131,6 +221,7 @@ const RegisterScreen = ({navigation}) => {
         onChangeText={(text) => {
           onChangeConfirmPassword(text);
         }}
+        error={confirmPassword && !validate('confirmPassword', confirmPassword)}
         value={confirmPassword}
       />
       <TextField
@@ -138,6 +229,7 @@ const RegisterScreen = ({navigation}) => {
         onChangeText={(text) => {
           onChangeAddress(text);
         }}
+        error={false}
         value={address}
       />
       <View style={styles.iconContainer}>
@@ -211,6 +303,7 @@ const RegisterScreen = ({navigation}) => {
         }}>
         <Text style={styles.pressableText}>Already have an account</Text>
       </TouchableOpacity>
+      {errorModal()}
     </ScrollView>
   );
 };

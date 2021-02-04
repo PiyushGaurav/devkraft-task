@@ -9,6 +9,7 @@ const TextField = ({
   value,
   keyboardType,
   textContentType,
+    error
 }) => {
   return (
     <TextInput
@@ -20,12 +21,13 @@ const TextField = ({
         alignSelf: 'center',
         width: '80%',
         borderRadius: 25,
-        borderColor: 'gray',
+        borderColor: 'red',
+          borderWidth:error ? 2 : 0,
         backgroundColor: 'white',
         ...genericShadow,
       }}
       placeholder={placeholder}
-      placeholderTextColor={'grey'}
+      placeholderTextColor={error ? 'red' : 'grey'}
       onChangeText={(text) => {
         onChangeText(text);
       }}

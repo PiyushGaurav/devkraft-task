@@ -1,6 +1,5 @@
-import React, {Component} from 'react';
-import {View, TextInput, TouchableOpacity, Text} from 'react-native';
-import {registerUser} from '../redux/user/userActions';
+import React from 'react';
+import {Text, TouchableOpacity} from 'react-native';
 import genericShadow from '../utils/genericShadow';
 
 const TextField = ({title, onPress}) => {

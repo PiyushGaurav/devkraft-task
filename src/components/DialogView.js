@@ -52,5 +52,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '400',
     color: 'black',
+    width: '80%',
+    textAlign: 'center',
   },
 });
