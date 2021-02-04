@@ -5,6 +5,7 @@ import {updateCurrentUser} from '../redux/user/userActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from '../components/Button';
 import Title from '../components/Title';
+import moment from 'moment';
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -38,8 +39,10 @@ const HomeScreen = () => {
           {user.email}
         </Text>
         <Text style={styles.details}>Gender : {user.gender}</Text>
+        <Text style={styles.details}>
+          DOB: {moment(user.dob).format('DD/MM/YYYY')}
+        </Text>
         <Text style={styles.details}>Phone Number : {user.phoneNumber}</Text>
-        <Text style={styles.details}>Password: {user.password}</Text>
         <Text style={styles.details}>Address : {user.address}</Text>
       </>
       <Button title={'Logout'} onPress={logout} />

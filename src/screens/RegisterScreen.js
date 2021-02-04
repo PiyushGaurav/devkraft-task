@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  ScrollView,
+} from 'react-native';
 import {registerUser} from '../redux/user/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import TextField from '../components/TextField';
@@ -10,6 +17,8 @@ import Title from '../components/Title';
 import Genders from '../components/Genders';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import genericShadow from '../utils/genericShadow';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 
 const RegisterScreen = ({navigation}) => {
   const userData = useSelector((state) => state.user.users);
@@ -22,7 +31,8 @@ const RegisterScreen = ({navigation}) => {
   const [password, onChangePassword] = useState('');
   const [confirmPassword, onChangeConfirmPassword] = useState('');
   const [photo, setPhoto] = useState('');
-  const [dob, onChangedob] = useState('');
+  const [show, setShow] = useState(false);
+  const [dob, onChangedob] = useState(new Date(1598051730000));
 
   const onRegister = async () => {
     const payload = [
@@ -34,6 +44,7 @@ const RegisterScreen = ({navigation}) => {
         gender,
         address,
         photo,
+        dob,
       },
     ];
     dispatch(registerUser(payload));
@@ -77,8 +88,14 @@ const RegisterScreen = ({navigation}) => {
     );
   };
 
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dob;
+    setShow(false);
+    onChangedob(currentDate);
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Title name={'REGISTER'} />
       <TextField
         placeholder={'First Name'}
@@ -143,6 +160,49 @@ const RegisterScreen = ({navigation}) => {
           />
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        onPress={() => {
+          setShow(true);
+        }}
+        style={{
+          paddingVertical: 10,
+          marginHorizontal: '10%',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          borderRadius: 25,
+          width: '80%',
+          height: 50,
+          margin: 10,
+          alignSelf: 'center',
+          ...genericShadow,
+        }}>
+        <Text
+          style={{
+            fontSize: 20,
+            paddingHorizontal: 20,
+          }}>
+          Date of birth
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            paddingHorizontal: 20,
+          }}>
+          {moment(dob).format('DD/MM/YYYY')}
+        </Text>
+      </TouchableOpacity>
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={dob}
+          mode={'date'}
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+      )}
       <Button onPress={onRegister} title={'Register'} />
       <TouchableOpacity
         style={styles.pressableTextView}
@@ -151,14 +211,13 @@ const RegisterScreen = ({navigation}) => {
         }}>
         <Text style={styles.pressableText}>Already have an account</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: '#16191A',
   },
   pressableTextView: {
