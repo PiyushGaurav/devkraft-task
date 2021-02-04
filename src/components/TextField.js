@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, TextInput} from 'react-native';
 import PropTypes from 'prop-types';
+import genericShadow from '../utils/genericShadow';
 
 const TextField = ({
   placeholder,
@@ -21,14 +22,7 @@ const TextField = ({
         borderRadius: 25,
         borderColor: 'gray',
         backgroundColor: 'white',
-        shadowColor: 'black',
-        shadowOffset: {
-          width: 5,
-          height: 5,
-        },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        elevation: 10,
+        ...genericShadow,
       }}
       placeholder={placeholder}
       placeholderTextColor={'grey'}

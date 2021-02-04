@@ -23,7 +23,9 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}}
+        source={
+          user?.photo ? {uri: user.photo} : require('../Images/avatar.png')
+        }
       />
       <Title name={user.name} />
       <>

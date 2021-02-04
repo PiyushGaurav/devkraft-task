@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import {registerUser} from '../redux/user/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import TextField from '../components/TextField';
@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LOCAL_CURRENT_USERS, LOCAL_USERS} from '../utils/constants';
 import Title from '../components/Title';
 import Genders from '../components/Genders';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import genericShadow from '../utils/genericShadow';
 
 const RegisterScreen = ({navigation}) => {
   const userData = useSelector((state) => state.user.users);
@@ -31,6 +33,7 @@ const RegisterScreen = ({navigation}) => {
         password,
         gender,
         address,
+        photo,
       },
     ];
     dispatch(registerUser(payload));
@@ -42,6 +45,36 @@ const RegisterScreen = ({navigation}) => {
     } catch (e) {
       // saving error
     }
+  };
+
+  const pickImage = () => {
+    launchImageLibrary({quality: 0.5}, (data) => {
+      if (data.didCancel) {
+        console.log('user canceled');
+      } else if (data.errorCode) {
+        console.log(data.errorMessage);
+      } else {
+        setPhoto(data.uri);
+      }
+    });
+  };
+
+  const captureImage = () => {
+    launchCamera(
+      {
+        quality: 0.5,
+        mediaType: 'photo',
+      },
+      (data) => {
+        if (data.didCancel) {
+          console.log('user canceled');
+        } else if (data.errorCode) {
+          console.log(data.errorMessage);
+        } else {
+          setPhoto(data.uri);
+        }
+      },
+    );
   };
 
   return (
@@ -90,6 +123,26 @@ const RegisterScreen = ({navigation}) => {
         }}
         value={address}
       />
+      <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconView} onPress={pickImage}>
+          <Image
+            style={styles.imageLibrary}
+            source={require('../Images/imageLibrary.png')}
+          />
+        </TouchableOpacity>
+        <View style={styles.imageContainer}>
+          <Image
+            style={styles.image}
+            source={photo ? {uri: photo} : require('../Images/avatar.png')}
+          />
+        </View>
+        <TouchableOpacity style={styles.iconView} onPress={captureImage}>
+          <Image
+            style={styles.imageLibrary}
+            source={require('../Images/camera.png')}
+          />
+        </TouchableOpacity>
+      </View>
       <Button onPress={onRegister} title={'Register'} />
       <TouchableOpacity
         style={styles.pressableTextView}
@@ -115,6 +168,39 @@ const styles = StyleSheet.create({
   pressableText: {
     color: 'green',
     fontSize: 15,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginHorizontal: 30,
+  },
+  imageContainer: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...genericShadow,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    ...genericShadow,
+  },
+  iconView: {
+    ...genericShadow,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'green',
+  },
+  imageLibrary: {
+    width: 35,
+    height: 35,
   },
 });
 

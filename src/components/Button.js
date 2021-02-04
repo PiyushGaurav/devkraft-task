@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, TextInput, TouchableOpacity, Text} from 'react-native';
 import {registerUser} from '../redux/user/userActions';
+import genericShadow from '../utils/genericShadow';
 
 const TextField = ({title, onPress}) => {
   return (
@@ -14,14 +15,7 @@ const TextField = ({title, onPress}) => {
         backgroundColor: 'green',
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: 'black',
-        shadowOffset: {
-          width: 5,
-          height: 5,
-        },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        elevation: 10,
+        ...genericShadow,
       }}
       onPress={onPress}>
       <Text
