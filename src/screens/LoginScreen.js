@@ -7,18 +7,22 @@ import Button from '../components/Button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LOCAL_CURRENT_USER} from '../utils/constants';
 import Title from '../components/Title';
+import DialogView from '../components/DialogView';
 
 const LoginScreen = ({navigation}) => {
   const userData = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
   const login = async () => {
     const dataFound = userData.find((data) => data.email === email);
     if (dataFound) {
       if (dataFound.password !== password) {
-        alert('Incorrect Passward');
+        setShowError(true);
+        setErrorText('Incorrect Passward');
       } else {
         dispatch(updateCurrentUser(dataFound));
         try {
@@ -31,8 +35,19 @@ const LoginScreen = ({navigation}) => {
         }
       }
     } else {
-      alert('Data not found');
+      setShowError(true);
+      setErrorText('Data not found');
     }
+  };
+
+  const errorModal = () => {
+    return (
+      <DialogView
+        show={showError}
+        errorText={errorText}
+        onDismiss={() => setShowError(false)}
+      />
+    );
   };
 
   return (
@@ -60,6 +75,7 @@ const LoginScreen = ({navigation}) => {
         }}>
         <Text style={styles.pressableText}>Dont have an account?</Text>
       </TouchableOpacity>
+      {errorModal()}
     </View>
   );
 };

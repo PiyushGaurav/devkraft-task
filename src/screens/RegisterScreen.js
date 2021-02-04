@@ -1,21 +1,21 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
-  ScrollView,
 } from 'react-native';
 import {registerUser} from '../redux/user/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {LOCAL_CURRENT_USERS, LOCAL_USERS} from '../utils/constants';
+import {LOCAL_USERS} from '../utils/constants';
 import Title from '../components/Title';
 import Genders from '../components/Genders';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import genericShadow from '../utils/genericShadow';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
